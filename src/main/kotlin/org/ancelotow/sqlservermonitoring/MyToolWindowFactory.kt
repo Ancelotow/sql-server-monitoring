@@ -5,41 +5,41 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
+import org.ancelotow.sqlservermonitoring.ui.tabs.MonitoringTab
+import org.ancelotow.sqlservermonitoring.ui.theme.SqlServerMonitoringTheme
 import org.jetbrains.jewel.bridge.addComposeTab
-import org.jetbrains.jewel.ui.component.OutlinedButton
 import org.jetbrains.jewel.ui.component.Text
-import kotlin.random.Random
 
 class MyToolWindowFactory : ToolWindowFactory {
     override fun shouldBeAvailable(project: Project) = true
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        toolWindow.addComposeTab("My Tool Window", focusOnClickInside = true) {
-            LaunchedEffect(Unit) {
-                // initial data loading
+        toolWindow.addComposeTab("SQL Server Monitoring", focusOnClickInside = true) {
+            SqlServerMonitoringTheme {
+                LaunchedEffect(Unit) {
+                    // initial monitoring data loading
+                }
+                MonitoringTab()
             }
+        }
 
-            MyToolWindowContent()
+        toolWindow.addComposeTab("Settings", focusOnClickInside = true) {
+            SqlServerMonitoringTheme {
+                SettingsTab()
+            }
         }
     }
 }
 
+
 @Composable
-private fun MyToolWindowContent() {
-    val labelText = remember { mutableStateOf("The random number is: ?") }
-
+private fun SettingsTab() {
     Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(labelText.value)
-
-        OutlinedButton(onClick = {
-            labelText.value = "The random number is: " + Random(System.currentTimeMillis()).nextInt(1000)
-        }) { Text("Shuffle") }
+        Text("Settings will go here (data source selection, refresh interval, etc.)")
     }
 }
