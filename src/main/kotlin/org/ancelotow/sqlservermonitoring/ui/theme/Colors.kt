@@ -12,19 +12,30 @@ data class MonitorColors(
 
 @Immutable
 data class AppColors(
-    val processorMonitor: MonitorColors,
+    val processTimeMonitor: MonitorColors,
+    val waitingTasksMonitor: MonitorColors,
+    val databaseIOMonitor: MonitorColors,
+    val batchRequestsMonitor: MonitorColors,
     val labelColor: Color
 )
-
-
-val defaultMonitorColors = MonitorColors(
-    backgroundColor = Color(0x55BC84F5),
-    lineColor = Color(0xFFFF3BFF)
-)
-
 val defaultColors = AppColors(
-    processorMonitor = defaultMonitorColors,
-    labelColor = Color.Black
+    processTimeMonitor = MonitorColors(
+        backgroundColor = Color(0x334CAF50),
+        lineColor = Color(0xFF4CAF50)
+    ),
+    waitingTasksMonitor = MonitorColors(
+        backgroundColor = Color(0x33FF9800),
+        lineColor = Color(0xFFFF9800)
+    ),
+    databaseIOMonitor = MonitorColors(
+        backgroundColor = Color(0x333F51B5),
+        lineColor = Color(0xFF7C4DFF)
+    ),
+    batchRequestsMonitor = MonitorColors(
+        backgroundColor = Color(0x33009688),
+        lineColor = Color(0xFF009688)
+    ),
+    labelColor = Color.White
 )
 
 val LocalColors = staticCompositionLocalOf<AppColors> {
