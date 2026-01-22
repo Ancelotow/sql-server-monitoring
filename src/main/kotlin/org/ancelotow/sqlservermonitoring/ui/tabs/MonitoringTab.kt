@@ -8,7 +8,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.jetbrains.rhizomedb.rql.Column
+import org.ancelotow.sqlservermonitoring.ui.theme.AppDimens
 import org.ancelotow.sqlservermonitoring.ui.theme.LocalColors
+import org.ancelotow.sqlservermonitoring.ui.theme.LocalDimens
+import org.ancelotow.sqlservermonitoring.ui.theme.MyMessageBundle
 import org.ancelotow.sqlservermonitoring.ui.widgets.MonitoringPanelWidget
 import org.jetbrains.jewel.ui.component.OutlinedButton
 import org.jetbrains.jewel.ui.component.Text
@@ -25,15 +29,50 @@ fun MonitoringTab() {
             labelText.value = "Monitoring tick: " + Random(System.currentTimeMillis()).nextInt(1000)
         }) { Text("Refresh") }
 
-        MonitoringPanelWidget(
-            refreshMs = 500,
-            capacity = 120,
-            monitorColors = LocalColors.current.processorMonitor
-        ) {
-            readFakeCpu() // remplace par ta métrique réelle
+        Column {
+            MonitoringPanelWidget(
+                refreshMs = 500,
+                capacity = 120,
+                monitorColors = LocalColors.current.processTimeMonitor,
+                label = MyMessageBundle.message("label.processor_timer"),
+                unitMetric = "%",
+                modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
+            ) {
+                readFakeCpu()
+            }
 
+            MonitoringPanelWidget(
+                refreshMs = 500,
+                capacity = 120,
+                monitorColors = LocalColors.current.waitingTasksMonitor,
+                label = MyMessageBundle.message("label.waiting_tasks"),
+                modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
+            ) {
+                readFakeCpu()
+            }
 
+            MonitoringPanelWidget(
+                refreshMs = 500,
+                capacity = 120,
+                monitorColors = LocalColors.current.databaseIOMonitor,
+                label = MyMessageBundle.message("label.database_io"),
+                unitMetric = "MB/s",
+                modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
+            ) {
+                readFakeCpu()
+            }
+
+            MonitoringPanelWidget(
+                refreshMs = 500,
+                capacity = 120,
+                monitorColors = LocalColors.current.batchRequestsMonitor,
+                label = MyMessageBundle.message("label.batch_requests"),
+                modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
+            ) {
+                readFakeCpu()
+            }
         }
+
     }
 }
 
