@@ -1,32 +1,23 @@
-<!-- Plugin Configuration File: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <!-- Unique identifier of the plugin. It should be FQN, cannot be changed between the plugin versions. -->
     <id>org.ancelotow.sql-server-monitoring</id>
+    <name>SQL Server Monitoring</name>
+    <vendor email="ancelotow@icloud.com">>Ancelotow</vendor>
 
-    <!-- Public plugin name should be written in Title Case.
-         Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-name -->
-    <name>Sql-server-monitoring</name>
-
-    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor url="https://www.yourcompany.com">YourCompany</vendor>
-
-    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
-         Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
     <description><![CDATA[
         Enter short description for your plugin here.<br>
         <em>most HTML tags may be used</em>
     ]]></description>
 
-    <!-- Product and plugin compatibility requirements.
-         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.compose</depends>
-
     <depends>com.intellij.database</depends>
+    <idea-version since-build="231.0"/>
+
     <resource-bundle>messages.MyMessageBundle</resource-bundle>
-    <!-- Extensions defined by the plugin.
-         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="MyToolWindow" factoryClass="org.ancelotow.sqlservermonitoring.MyToolWindowFactory"
-                    icon="AllIcons.Toolwindows.ToolWindowPalette"/>
+        <toolWindow id="SQLServerMonitoring"
+                    factoryClass="org.ancelotow.sqlservermonitoring.MyToolWindowFactory"
+                    icon="AllIcons.Toolwindows.ToolWindowPalette"
+                    anchor="right"/>
     </extensions>
 </idea-plugin>
