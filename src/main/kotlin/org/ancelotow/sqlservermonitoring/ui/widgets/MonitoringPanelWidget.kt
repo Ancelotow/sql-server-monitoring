@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.zIndex
 import org.ancelotow.sqlservermonitoring.ui.theme.LocalColors
 import org.ancelotow.sqlservermonitoring.ui.theme.LocalDimens
 import org.ancelotow.sqlservermonitoring.ui.theme.MonitorColors
@@ -28,6 +29,8 @@ fun MonitoringPanelWidget(
     monitorColors: MonitorColors,
     refreshMs: Long = 500L,
     capacity: Int = 120,
+    label: String,
+    unitMetric: String = "",
     readMetric: () -> Float
 ) {
     val buffer = remember { TimeSeriesBuffer(capacity) }
@@ -50,8 +53,7 @@ fun MonitoringPanelWidget(
                 shape = RoundedCornerShape(LocalDimens.current.radius)
             )
     ) {
-        val label = MyMessageBundle.message("label.processor_timer")
-        val value = " %.2f%%".format(readMetric())
+        val value = " %.2f".format(readMetric())
 
         Text(
             text = buildAnnotatedString {
@@ -59,10 +61,11 @@ fun MonitoringPanelWidget(
                 append(label)
                 pushStyle(SpanStyle(fontWeight = FontWeight.Normal))
                 append(value)
+                append(" $unitMetric")
                 pop()
             },
             color = LocalColors.current.labelColor,
-            modifier = Modifier.padding(LocalDimens.current.padding)
+            modifier = Modifier.padding(LocalDimens.current.padding).zIndex(1f)
         )
         LineGraph(
             data = values,
