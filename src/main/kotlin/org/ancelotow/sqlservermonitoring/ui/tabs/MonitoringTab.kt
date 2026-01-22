@@ -23,12 +23,6 @@ fun MonitoringTab() {
     val labelText = remember { mutableStateOf("Monitoring: not started") }
 
     Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(labelText.value)
-
-        OutlinedButton(onClick = {
-            labelText.value = "Monitoring tick: " + Random(System.currentTimeMillis()).nextInt(1000)
-        }) { Text("Refresh") }
-
         Column {
             MonitoringPanelWidget(
                 refreshMs = 500,

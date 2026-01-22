@@ -15,9 +15,9 @@
     <resource-bundle>messages.MyMessageBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="SQLServerMonitoring"
+        <toolWindow id="SQL Server Monitoring"
                     factoryClass="org.ancelotow.sqlservermonitoring.MyToolWindowFactory"
-                    icon="AllIcons.Toolwindows.ToolWindowPalette"
+                    icon="AllIcons.Toolwindows.ToolWindowProfiler"
                     anchor="right"/>
     </extensions>
 </idea-plugin>
