@@ -16,7 +16,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="SQL Server Monitoring"
-                    factoryClass="org.ancelotow.sqlservermonitoring.MyToolWindowFactory"
+                    factoryClass="org.ancelotow.sqlservermonitoring.SqlServerMonitoringWindowFactory"
                     icon="AllIcons.Toolwindows.ToolWindowProfiler"
                     anchor="right"/>
     </extensions>
