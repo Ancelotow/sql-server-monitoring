@@ -16,7 +16,9 @@ data class AppColors(
     val waitingTasksMonitor: MonitorColors,
     val databaseIOMonitor: MonitorColors,
     val batchRequestsMonitor: MonitorColors,
-    val labelColor: Color
+    val labelColor: Color,
+
+    val greenColor: Color,
 )
 val defaultColors = AppColors(
     processTimeMonitor = MonitorColors(
@@ -35,7 +37,8 @@ val defaultColors = AppColors(
         backgroundColor = Color(0x33009688),
         lineColor = Color(0xFF009688)
     ),
-    labelColor = Color.White
+    labelColor = Color.White,
+    greenColor = Color(0xFF00FF00)
 )
 
 val LocalColors = staticCompositionLocalOf<AppColors> {

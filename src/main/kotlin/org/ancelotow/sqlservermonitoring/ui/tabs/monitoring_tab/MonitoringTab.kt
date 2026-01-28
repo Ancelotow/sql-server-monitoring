@@ -52,7 +52,7 @@ fun MonitoringTab(
                 Icon(
                     key = AllIconsKeys.Actions.Refresh,
                     contentDescription = MyMessageBundle.message("icon.refresh"),
-                    tint = Color(0xFF00FF00)
+                    tint = LocalColors.current.greenColor
                 )
             }
 
