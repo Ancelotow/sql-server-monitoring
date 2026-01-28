@@ -2,18 +2,32 @@ package org.ancelotow.sqlservermonitoring.ui.tabs.monitoring_tab
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.intellij.database.util.common.javaClass
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.IconLoader
 import org.ancelotow.sqlservermonitoring.ui.models.DefaultStateStatus
 import org.ancelotow.sqlservermonitoring.ui.theme.LocalColors
 import org.ancelotow.sqlservermonitoring.ui.theme.LocalDimens
 import org.ancelotow.sqlservermonitoring.ui.theme.MyMessageBundle
 import org.ancelotow.sqlservermonitoring.ui.widgets.DataSourceComboBox
 import org.ancelotow.sqlservermonitoring.ui.widgets.MonitoringPanelWidget
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.IconButton
+import org.jetbrains.jewel.ui.component.OutlinedButton
+import org.jetbrains.jewel.ui.icon.IconKey
+import org.jetbrains.jewel.ui.icons.AllIconsKeys
 
 @Composable
 fun MonitoringTab(
@@ -24,14 +38,32 @@ fun MonitoringTab(
     LaunchedEffect(Unit) {
         viewModel.onEvent(MonitoringTabEvent.FetchSources(project))
     }
+    Column(
+        verticalArrangement = Arrangement.spacedBy(LocalDimens.current.smallPadding),
+        modifier = Modifier.padding(LocalDimens.current.largePadding)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.smallPadding)
+        ) {
+            IconButton(
+                onClick = { viewModel.onEvent(MonitoringTabEvent.FetchSources(project)) },
+                enabled = state.status != DefaultStateStatus.LOADING
+            ) {
+                Icon(
+                    key = AllIconsKeys.Actions.Refresh,
+                    contentDescription = MyMessageBundle.message("icon.refresh"),
+                    tint = Color(0xFF00FF00)
+                )
+            }
 
-    Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        DataSourceComboBox(
-            isLoading = state.status == DefaultStateStatus.LOADING,
-            items = state.sources,
-            onItemSelected = { },
-            selected = null
-        )
+            DataSourceComboBox(
+                isLoading = state.status == DefaultStateStatus.LOADING,
+                items = state.sources,
+                onItemSelected = { },
+                selected = null
+            )
+        }
+
 
         Column {
 
