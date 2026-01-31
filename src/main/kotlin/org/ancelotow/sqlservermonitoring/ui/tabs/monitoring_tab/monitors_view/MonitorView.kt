@@ -33,6 +33,7 @@ fun MonitorView(
             monitorColors = LocalColors.current.processTimeMonitor,
             label = MyMessageBundle.message("label.processor_timer"),
             unitMetric = "%",
+            maxValue = 100f,
             modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
         ) {
             viewModel.state.monitor.processorTime.toFloat()
@@ -43,6 +44,7 @@ fun MonitorView(
             capacity = CAPACITY,
             monitorColors = LocalColors.current.waitingTasksMonitor,
             label = MyMessageBundle.message("label.waiting_tasks"),
+            maxValue = 10f,
             modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
         ) {
             viewModel.state.monitor.waitingTask.toFloat()
@@ -54,6 +56,7 @@ fun MonitorView(
             monitorColors = LocalColors.current.databaseIOMonitor,
             label = MyMessageBundle.message("label.database_io"),
             unitMetric = "MB/s",
+            maxValue = 10f,
             modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
         ) {
             viewModel.state.monitor.databaseIO.toFloat()
@@ -64,6 +67,7 @@ fun MonitorView(
             capacity = CAPACITY,
             monitorColors = LocalColors.current.batchRequestsMonitor,
             label = MyMessageBundle.message("label.batch_requests"),
+            maxValue = 10f,
             modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
         ) {
             viewModel.state.monitor.batchRequests.toFloat()

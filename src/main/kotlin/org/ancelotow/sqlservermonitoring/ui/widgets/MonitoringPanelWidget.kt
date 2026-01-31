@@ -24,6 +24,7 @@ fun MonitoringPanelWidget(
     capacity: Int = 120,
     label: String,
     unitMetric: String = "",
+    maxValue: Float = 100f,
     readMetric: () -> Float
 ) {
     val buffer = remember { TimeSeriesBuffer(capacity) }
@@ -63,7 +64,8 @@ fun MonitoringPanelWidget(
         LineGraph(
             data = values,
             capacity = 50,
-            lineColor = monitorColors.lineColor
+            lineColor = monitorColors.lineColor,
+            maxValue = maxValue
         )
     }
 }

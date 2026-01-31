@@ -17,7 +17,8 @@ fun LineGraph(
     data: List<Float>,
     capacity: Int = 50,
     lineColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    maxValue: Float = 100f
 ) {
     Canvas(
         modifier = modifier.fillMaxSize()
@@ -27,7 +28,7 @@ fun LineGraph(
 
         if (data.size < 2) return@Canvas
 
-        val maxValue = max(data.maxOrNull() ?: 1f, 1f)
+        val maxValue = max(data.maxOrNull() ?: 1f, maxValue)
         val minValue = min(data.minOrNull() ?: 0f, maxValue - 1f)
 
         val points = data.takeLast(capacity).mapIndexed { index, value ->
