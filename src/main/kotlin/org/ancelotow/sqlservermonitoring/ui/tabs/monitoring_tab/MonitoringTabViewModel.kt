@@ -31,8 +31,8 @@ class MonitoringTabViewModel(
     override fun onEvent(event: MonitoringTabEvent) {
         when(event){
             is MonitoringTabEvent.FetchSources -> fetchSources(event.project)
-            is MonitoringTabEvent.SelectSource -> selectDataSource(event.dataSource)
-            is MonitoringTabEvent.FetchMonitor -> fetchMonitor(event.dataSource)
+            is MonitoringTabEvent.SelectSource -> selectDataSource(event.project, event.dataSource)
+            is MonitoringTabEvent.FetchMonitor -> fetchMonitor(event.project, event.dataSource)
         }
     }
 
@@ -58,15 +58,15 @@ class MonitoringTabViewModel(
         }
     }
 
-    private fun selectDataSource(dataSource: LocalDataSource){
-        startMonitoring(dataSource)
+    private fun selectDataSource(project: Project, dataSource: LocalDataSource){
+        startMonitoring(project, dataSource)
         selectedDataSource = dataSource
     }
 
-    private fun fetchMonitor(dataSource: LocalDataSource){
+    private fun fetchMonitor(project: Project, dataSource: LocalDataSource){
         viewModelScope.launch {
             state = state.init()
-            interactor.getMonitor(dataSource).collect {
+            interactor.getMonitor(project, dataSource).collect {
                 state = when(it){
                     is GetMonitorState.Loading -> {
                         state.loading()
@@ -85,11 +85,11 @@ class MonitoringTabViewModel(
         }
     }
 
-    private fun startMonitoring(dataSource: LocalDataSource) {
+    private fun startMonitoring(project: Project, dataSource: LocalDataSource) {
         isMonitoringActive = true
         viewModelScope.launch {
             while (isMonitoringActive) {
-                fetchMonitor(dataSource)
+                fetchMonitor(project, dataSource)
                 delay(MONITORING_INTERVAL_MS)
             }
         }

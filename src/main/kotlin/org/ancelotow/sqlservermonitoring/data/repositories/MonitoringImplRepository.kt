@@ -1,6 +1,7 @@
 package org.ancelotow.sqlservermonitoring.data.repositories
 
 import com.intellij.database.dataSource.LocalDataSource
+import com.intellij.openapi.project.Project
 import org.ancelotow.sqlservermonitoring.data.data_sources.MonitoringSource
 import org.ancelotow.sqlservermonitoring.data.mappers.MonitorMapper
 import org.ancelotow.sqlservermonitoring.domain.entities.Monitor
@@ -11,8 +12,8 @@ class MonitoringImplRepository(
     private val mapper: MonitorMapper
 ) : MonitoringRepository {
 
-    override suspend fun getMonitor(dataSource: LocalDataSource): Monitor {
-        val dto = source.getMonitor(dataSource)
+    override suspend fun getMonitor(project: Project, dataSource: LocalDataSource): Monitor {
+        val dto = source.getMonitor(project, dataSource)
         return mapper.rehydrate(dto)
     }
 

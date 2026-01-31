@@ -1,15 +1,17 @@
 package org.ancelotow.sqlservermonitoring.data.data_sources.local
 
+import com.intellij.database.console.session.DatabaseSessionManager.getSession
+import com.intellij.database.dataSource.DatabaseConnectionCore
 import com.intellij.database.dataSource.LocalDataSource
+import com.intellij.database.datagrid.DataRequest.RawRequest
+import com.intellij.openapi.project.Project
 import org.ancelotow.sqlservermonitoring.data.data_sources.MonitoringSource
 import org.ancelotow.sqlservermonitoring.data.data_sources.dto.MonitorDto
-import java.sql.Connection
-import java.sql.SQLException
 
 class MonitoringLocalSource : MonitoringSource {
 
-    override suspend fun getMonitor(dataSource: LocalDataSource): MonitorDto {
-        val sql = """
+    override suspend fun getMonitor(project: Project, dataSource: LocalDataSource): MonitorDto {
+        val querySql = """
             ;WITH rb AS 
             ( 
                 SELECT TOP (1) 
@@ -31,36 +33,30 @@ class MonitoringLocalSource : MonitoringSource {
             FROM rb;
         """.trimIndent()
 
-        val connection: Connection? = try {
-            val method = dataSource.javaClass.getMethod("getConnection")
-            method.invoke(dataSource) as? Connection
-        } catch (e: NoSuchMethodException) {
-            e.printStackTrace()
-            null
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-
-        connection?.use { conn ->
-            try {
-                conn.prepareStatement(sql).use { stmt ->
-                    stmt.executeQuery().use { rs ->
-                        if (rs.next()) {
-                            val proc = rs.getInt("SQLProcessUtilization")
-                            val idle = rs.getInt("SystemIdle")
-                            val other = rs.getInt("OtherProcessUtilization")
-                            val sample = rs.getInt("SampleTime")
-                            return MonitorDto(proc, idle, other, sample)
-                        }
-                    }
+        var monitor = MonitorDto(0, 0, 0, 0)
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
+        val session = getSession(project, dataSource)
+        val req: RawRequest = object : RawRequest(session) {
+            @Throws(java.lang.Exception::class)
+            override fun processRaw(context: Context?, databaseConnectionCore: DatabaseConnectionCore) {
+                val conn = databaseConnectionCore.remoteConnection
+                val stmt = conn.prepareStatement(querySql)
+                stmt.execute()
+                val resultSet = stmt.resultSet
+                if (resultSet.next()) {
+                    val proc = resultSet.getInt("SQLProcessUtilization")
+                    val idle = resultSet.getInt("SystemIdle")
+                    val other = resultSet.getInt("OtherProcessUtilization")
+                    val sample = resultSet.getInt("SampleTime")
+                    monitor = MonitorDto(proc, idle, other, sample)
                 }
-            } catch (e: SQLException) {
-                e.printStackTrace()
+                stmt.close()
+                conn.close()
             }
         }
+        session.messageBus.dataProducer.processRequest(req)
 
-        return MonitorDto(0, 0, 0, 0)
+        return monitor
     }
 
 

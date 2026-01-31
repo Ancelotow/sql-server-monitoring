@@ -48,7 +48,7 @@ fun MonitoringTab(
             DataSourceComboBox(
                 isLoading = state.status == DefaultStateStatus.LOADING,
                 items = state.sources,
-                onItemSelected = { source -> viewModel.onEvent(MonitoringTabEvent.SelectSource(source)) },
+                onItemSelected = { source -> viewModel.onEvent(MonitoringTabEvent.SelectSource(project, source)) },
                 selected = viewModel.selectedDataSource
             )
         }
@@ -98,8 +98,4 @@ fun MonitoringTab(
         }
 
     }
-}
-
-fun readFakeCpu(): Float {
-    return (20..90).random().toFloat()
 }
