@@ -5,8 +5,11 @@ import com.intellij.database.dataSource.DatabaseConnectionCore
 import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.database.datagrid.DataRequest.RawRequest
 import com.intellij.openapi.project.Project
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.ancelotow.sqlservermonitoring.data.data_sources.MonitoringSource
 import org.ancelotow.sqlservermonitoring.data.data_sources.dto.MonitorDto
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class MonitoringLocalSource : MonitoringSource {
 
@@ -33,30 +36,31 @@ class MonitoringLocalSource : MonitoringSource {
             FROM rb;
         """.trimIndent()
 
-        var monitor = MonitorDto(0, 0, 0, 0)
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
         val session = getSession(project, dataSource)
-        val req: RawRequest = object : RawRequest(session) {
-            @Throws(java.lang.Exception::class)
-            override fun processRaw(context: Context?, databaseConnectionCore: DatabaseConnectionCore) {
-                val conn = databaseConnectionCore.remoteConnection
-                val stmt = conn.prepareStatement(querySql)
-                stmt.execute()
-                val resultSet = stmt.resultSet
-                if (resultSet.next()) {
-                    val proc = resultSet.getInt("SQLProcessUtilization")
-                    val idle = resultSet.getInt("SystemIdle")
-                    val other = resultSet.getInt("OtherProcessUtilization")
-                    val sample = resultSet.getInt("SampleTime")
-                    monitor = MonitorDto(proc, idle, other, sample)
+        return suspendCancellableCoroutine { cont ->
+            val req: RawRequest = object : RawRequest(session) {
+                override fun processRaw(context: Context?, databaseConnectionCore: DatabaseConnectionCore) {
+                    try {
+                        val conn = databaseConnectionCore.remoteConnection
+                        val stmt = conn.prepareStatement(querySql)
+                        stmt.execute()
+                        val resultSet = stmt.resultSet
+                        if (resultSet.next()) {
+                            val proc = resultSet.getInt("SQLProcessUtilization")
+                            val idle = resultSet.getInt("SystemIdle")
+                            val other = resultSet.getInt("OtherProcessUtilization")
+                            val sample = resultSet.getInt("SampleTime")
+                            cont.resume(MonitorDto(proc, idle, other, sample))
+                        }
+                        cont.resume(MonitorDto(0, 0, 0, 0))
+                    } catch (e: Exception) {
+                        cont.resumeWithException(e)
+                    }
                 }
-                stmt.close()
-                conn.close()
             }
+            session.messageBus.dataProducer.processRequest(req)
         }
-        session.messageBus.dataProducer.processRequest(req)
-
-        return monitor
     }
 
 
