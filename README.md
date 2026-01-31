@@ -6,6 +6,8 @@
 JetBrains plugin to monitor SQL Server databases.
 
 ## 🚀 Features
+
+- [Demo video](assets/demo.mov)
 - Monitor SQL Server databases from data sources defined in JetBrains IDEs (DataGrip, IntelliJ IDEA Ultimate, etc.).
 - View real-time performance metrics such as :
     - CPU usage in percent
@@ -17,6 +19,8 @@ JetBrains plugin to monitor SQL Server databases.
 
 
   <img src="assets/screenshots.png" alt="screenshot" height="500" style="vertical-align: middle; margin-right: 10px;">
+
+
 
 ## 🎨 Crédit Graphique
 Les logos ont été créés par [Irene CERRO](https://github.com/pandairene7).
