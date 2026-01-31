@@ -8,6 +8,7 @@ import org.ancelotow.sqlservermonitoring.ui.models.ViewModelState
 
 class MonitorViewState(
     val monitor: Monitor = Monitor.empty,
+    val isMonitoring: Boolean = false,
     status: DefaultStateStatus = DefaultStateStatus.INITIAL,
     errors: List<ErrorType> = emptyList()
 ) :  DefaultState<MonitorViewState>(status, errors), ViewModelState {
@@ -21,7 +22,11 @@ class MonitorViewState(
     }
 
     fun success(monitor: Monitor): MonitorViewState {
-        return MonitorViewState(status = DefaultStateStatus.SUCCESS, monitor = monitor)
+        return MonitorViewState(status = DefaultStateStatus.SUCCESS, monitor = monitor, isMonitoring = true)
+    }
+
+    fun successStop(): MonitorViewState {
+        return MonitorViewState(status = DefaultStateStatus.SUCCESS, isMonitoring = false)
     }
 
     override fun error(errors: List<ErrorType>): MonitorViewState {

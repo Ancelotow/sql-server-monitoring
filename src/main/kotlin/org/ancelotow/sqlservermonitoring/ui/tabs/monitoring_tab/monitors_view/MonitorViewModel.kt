@@ -26,6 +26,8 @@ class MonitorViewModel(
     override fun onEvent(event: MonitorViewEvent) {
         when(event){
             is MonitorViewEvent.StartFetching -> startMonitoring(event.project, event.dataSource)
+            is MonitorViewEvent.StopFetching -> stopMonitoring()
+            is MonitorViewEvent.ResumeFetching -> startMonitoring(event.project, event.dataSource)
         }
     }
 
@@ -52,6 +54,12 @@ class MonitorViewModel(
                 delay(MONITORING_INTERVAL_MS)
             }
         }
+    }
+
+    private fun stopMonitoring() {
+        monitoringJob?.cancel()
+        monitoringJob = null
+        state = state.successStop()
     }
 
     companion object {

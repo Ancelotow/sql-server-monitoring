@@ -21,6 +21,7 @@ data class AppColors(
     val labelColor: Color,
 
     val greenColor: Color,
+    val redColor: Color
 )
 val defaultColors = AppColors(
     processTimeMonitor = MonitorColors(
@@ -48,7 +49,8 @@ val defaultColors = AppColors(
         lineColor = Color(0xFF5E35B1)
     ),
     labelColor = Color.White,
-    greenColor = Color(0xFF00FF00)
+    greenColor = Color(0xFF00FF00),
+    redColor = Color(0xFFFF0000)
 )
 
 val LocalColors = staticCompositionLocalOf<AppColors> {

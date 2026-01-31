@@ -25,17 +25,19 @@ fun MonitoringPanelWidget(
     label: String,
     unitMetric: String = "",
     maxValue: Float = 100f,
+    stopPropagation: Boolean = false,
     readMetric: () -> Float
 ) {
     val buffer = remember { TimeSeriesBuffer(capacity) }
     var values by remember { mutableStateOf(emptyList<Float>()) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(stopPropagation) {
         while (true) {
             val sample = readMetric()
             buffer.add(sample)
             values = buffer.values()
             delay(refreshMs)
+            if(stopPropagation) break
         }
     }
 
