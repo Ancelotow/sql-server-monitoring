@@ -13,26 +13,37 @@ import kotlin.coroutines.resumeWithException
 
 class MonitoringLocalSource : MonitoringSource {
 
+    private var prevDatabaseIO: Long = 0
+    private var prevBatchRequests: Long = 0
+    private var prevTimestamp: Long = System.currentTimeMillis()
+
     override suspend fun getMonitor(project: Project, dataSource: LocalDataSource): MonitorDto {
         val querySql = """
-            ;WITH rb AS 
-            ( 
-                SELECT TOP (1) 
-                    rb.[timestamp], 
-                    CONVERT(xml, rb.record) AS record_xml 
-                FROM sys.dm_os_ring_buffers AS rb 
-                WHERE rb.ring_buffer_type = N'RING_BUFFER_SCHEDULER_MONITOR' 
-                    AND rb.record LIKE '%<SystemHealth>%' 
-                ORDER BY rb.[timestamp] DESC 
-            ) 
-            SELECT 
-                SQLProcessUtilization = rb.record_xml.value('(//SystemHealth/ProcessUtilization)[1]', 'int'), 
-                SystemIdle = rb.record_xml.value('(//SystemHealth/SystemIdle)[1]', 'int'), 
-                OtherProcessUtilization = 
-                    100 
-                    - rb.record_xml.value('(//SystemHealth/ProcessUtilization)[1]', 'int') 
-                    - rb.record_xml.value('(//SystemHealth/SystemIdle)[1]', 'int'), 
-                SampleTime = rb.[timestamp] 
+            ;WITH rb AS
+            (
+                SELECT TOP (1)
+                    rb.[timestamp],
+                    CONVERT(xml, rb.record) AS record_xml
+                FROM sys.dm_os_ring_buffers AS rb
+                WHERE rb.ring_buffer_type = N'RING_BUFFER_SCHEDULER_MONITOR'
+                    AND rb.record LIKE '%<SystemHealth>%'
+                ORDER BY rb.[timestamp] DESC
+            )
+            SELECT
+             SQLProcessUtilization = rb.record_xml.value('(//SystemHealth/ProcessUtilization)[1]', 'int'),
+             WaitingTasks = (SELECT COUNT(*)
+                             FROM sys.dm_exec_requests
+                             WHERE status = 'suspended'),
+             DatabaseIO_MBps = (
+                 SELECT SUM(num_of_bytes_read + num_of_bytes_written) * 1.0 / 1024 / 1024
+                 FROM sys.dm_io_virtual_file_stats(NULL, NULL)
+             ),
+             BatchRequestsPerSec = (
+                 SELECT cntr_value
+                 FROM sys.dm_os_performance_counters
+                 WHERE counter_name = 'Batch Requests/sec'
+                     AND instance_name = ''
+             )
             FROM rb;
         """.trimIndent()
 
@@ -46,15 +57,22 @@ class MonitoringLocalSource : MonitoringSource {
                         val stmt = conn.prepareStatement(querySql)
                         stmt.queryTimeout = 5
                         stmt.execute()
-                        val resultSet = stmt.resultSet
-                        if (resultSet.next()) {
-                            val proc = resultSet.getInt("SQLProcessUtilization")
-                            val idle = resultSet.getInt("SystemIdle")
-                            val other = resultSet.getInt("OtherProcessUtilization")
-                            val sample = resultSet.getInt("SampleTime")
-                            cont.resume(MonitorDto(proc, idle, other, sample))
-                        } else {
-                            cont.resumeWithException(Exception("No data returned from query"))
+                        val rs = stmt.resultSet
+                        if (rs.next()) {
+                            val proc = rs.getInt("SQLProcessUtilization")
+                            val waitingTasks = rs.getInt("WaitingTasks")
+                            val databaseIONow = rs.getLong("DatabaseIO_MBps")
+                            val batchRequestNow = rs.getLong("BatchRequestsPerSec")
+                            val now = System.currentTimeMillis()
+                            val intervalSec = (now - prevTimestamp) / 1000.0
+
+                            val databaseIO = if (prevDatabaseIO != 0L) (databaseIONow - prevDatabaseIO) / intervalSec else 0.0
+                            val batchRequest = if (prevBatchRequests != 0L) (batchRequestNow - prevBatchRequests) / intervalSec else 0.0
+
+                            prevDatabaseIO = databaseIONow
+                            prevBatchRequests = batchRequestNow
+                            prevTimestamp = now
+                            cont.resume(MonitorDto(proc, waitingTasks, databaseIO.toInt(), batchRequest.toInt()))
                         }
                     } catch (e: Exception) {
                         cont.resumeWithException(e)
