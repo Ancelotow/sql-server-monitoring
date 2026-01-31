@@ -2,21 +2,12 @@ package org.ancelotow.sqlservermonitoring.ui.tabs.monitoring_tab
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import com.intellij.database.util.common.javaClass
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.IconLoader
 import org.ancelotow.sqlservermonitoring.ui.models.DefaultStateStatus
 import org.ancelotow.sqlservermonitoring.ui.theme.LocalColors
 import org.ancelotow.sqlservermonitoring.ui.theme.LocalDimens
@@ -25,8 +16,6 @@ import org.ancelotow.sqlservermonitoring.ui.widgets.DataSourceComboBox
 import org.ancelotow.sqlservermonitoring.ui.widgets.MonitoringPanelWidget
 import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.IconButton
-import org.jetbrains.jewel.ui.component.OutlinedButton
-import org.jetbrains.jewel.ui.icon.IconKey
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
 
 @Composable
