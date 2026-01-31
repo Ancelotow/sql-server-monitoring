@@ -7,7 +7,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.openapi.project.Project
-import org.ancelotow.sqlservermonitoring.ui.tabs.monitoring_tab.MonitoringTabViewModel
 import org.ancelotow.sqlservermonitoring.ui.tabs.monitoring_tab.monitors_view.MonitorViewModel.Companion.CAPACITY
 import org.ancelotow.sqlservermonitoring.ui.tabs.monitoring_tab.monitors_view.MonitorViewModel.Companion.MONITORING_INTERVAL_MS
 import org.ancelotow.sqlservermonitoring.ui.theme.LocalColors
@@ -71,6 +70,30 @@ fun MonitorView(
             modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
         ) {
             viewModel.state.monitor.batchRequests.toFloat()
+        }
+
+        MonitoringPanelWidget(
+            refreshMs = MONITORING_INTERVAL_MS,
+            capacity = CAPACITY,
+            monitorColors = LocalColors.current.tempDBLogMonitor,
+            label = MyMessageBundle.message("label.temp_db"),
+            maxValue = 20000f,
+            unitMetric = "MB",
+            modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
+        ) {
+            viewModel.state.monitor.tempDbDiskUsage.toFloat()
+        }
+
+        MonitoringPanelWidget(
+            refreshMs = MONITORING_INTERVAL_MS,
+            capacity = CAPACITY,
+            monitorColors = LocalColors.current.ramUsageMonitor,
+            label = MyMessageBundle.message("label.ram_usage"),
+            maxValue = 10000f,
+            unitMetric = "MB",
+            modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
+        ) {
+            viewModel.state.monitor.ramUsage.toFloat()
         }
     }
 }

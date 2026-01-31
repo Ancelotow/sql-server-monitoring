@@ -43,7 +43,16 @@ class MonitoringLocalSource : MonitoringSource {
                  FROM sys.dm_os_performance_counters
                  WHERE counter_name = 'Batch Requests/sec'
                      AND instance_name = ''
-             )
+             ),
+             TempDB_MB = (
+                 SELECT FILEPROPERTY(name, 'SpaceUsed')*8.0/1024 AS Used_MB
+                 FROM sys.database_files
+                 WHERE type = 1
+             ),
+             RAM_Usage = (
+                 SELECT  (total_physical_memory_kb - available_physical_memory_kb) / 1024.0
+                 FROM sys.dm_os_sys_memory
+                 )
             FROM rb;
         """.trimIndent()
 
@@ -63,6 +72,8 @@ class MonitoringLocalSource : MonitoringSource {
                             val waitingTasks = rs.getInt("WaitingTasks")
                             val databaseIONow = rs.getLong("DatabaseIO_MBps")
                             val batchRequestNow = rs.getLong("BatchRequestsPerSec")
+                            val tempDbLog = rs.getLong("TempDB_MB")
+                            val ramUsageNow = rs.getLong("RAM_Usage")
                             val now = System.currentTimeMillis()
                             val intervalSec = (now - prevTimestamp) / 1000.0
 
@@ -72,7 +83,16 @@ class MonitoringLocalSource : MonitoringSource {
                             prevDatabaseIO = databaseIONow
                             prevBatchRequests = batchRequestNow
                             prevTimestamp = now
-                            cont.resume(MonitorDto(proc, waitingTasks, databaseIO.toInt(), batchRequest.toInt()))
+
+                            val monitor = MonitorDto(
+                                processorTime = proc,
+                                waitingTask = waitingTasks,
+                                databaseIO = databaseIO.toInt(),
+                                batchRequests = batchRequest.toInt(),
+                                ramUsage = ramUsageNow.toInt(),
+                                tempDbDiskUsage = tempDbLog.toInt()
+                            )
+                            cont.resume(monitor)
                         }
                     } catch (e: Exception) {
                         cont.resumeWithException(e)

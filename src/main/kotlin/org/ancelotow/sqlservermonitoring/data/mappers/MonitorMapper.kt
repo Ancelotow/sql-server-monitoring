@@ -10,7 +10,9 @@ class MonitorMapper {
             processorTime = dto.processorTime,
             waitingTask = dto.waitingTask,
             databaseIO = dto.databaseIO,
-            batchRequests = dto.batchRequests
+            batchRequests = dto.batchRequests,
+            ramUsage = dto.ramUsage,
+            tempDbDiskUsage = dto.tempDbDiskUsage
         )
     }
 

@@ -4,5 +4,7 @@ data class MonitorDto(
     val processorTime: Int,
     val waitingTask: Int,
     val databaseIO: Int,
-    val batchRequests: Int
+    val batchRequests: Int,
+    val ramUsage: Int,
+    val tempDbDiskUsage: Int
 )

@@ -16,6 +16,8 @@ data class AppColors(
     val waitingTasksMonitor: MonitorColors,
     val databaseIOMonitor: MonitorColors,
     val batchRequestsMonitor: MonitorColors,
+    val ramUsageMonitor: MonitorColors,
+    val tempDBLogMonitor: MonitorColors,
     val labelColor: Color,
 
     val greenColor: Color,
@@ -36,6 +38,14 @@ val defaultColors = AppColors(
     batchRequestsMonitor = MonitorColors(
         backgroundColor = Color(0x33009688),
         lineColor = Color(0xFF009688)
+    ),
+    ramUsageMonitor = MonitorColors(
+        backgroundColor = Color(0x33D32F2F),
+        lineColor = Color(0xFFD32F2F)
+    ),
+    tempDBLogMonitor = MonitorColors(
+        backgroundColor = Color(0x335E35B1),
+        lineColor = Color(0xFF5E35B1)
     ),
     labelColor = Color.White,
     greenColor = Color(0xFF00FF00)
