@@ -4,24 +4,17 @@
     <vendor email="ancelotow@icloud.com">>Ancelotow</vendor>
 
     <description><![CDATA[
-        ## 🛠️ SQL Server Monitoring Plugin
+        A JetBrains plugin to monitor SQL Server databases directly within your IDE, including DataGrip and IntelliJ IDEA Ultimate.
 
-        A JetBrains plugin designed to monitor SQL Server databases directly from your favorite JetBrains IDEs, such as DataGrip or IntelliJ IDEA Ultimate.
-
-        ### 🌟 Key Features
-        - **Real-time monitoring** of SQL Server databases from configured data sources.
+        Key Features:
+        - **Real-time monitoring** of configured SQL Server data sources.
         - **Performance metrics visualization:**
-            - CPU utilization in percentage.
-            - Waiting tasks.
-            - I/O usage in MB/s.
-            - Batch requests per second.
-            - Total TempDB size in MB.
-            - RAM usage in MB.
-
-        🚀 Automate your SQL Server performance monitoring without leaving your IDE!
-
-        ### 🖼️ Plugin Preview
-        <img src="assets/screenshots.png" alt="SQL Server Monitoring Plugin Preview" width="800"/>
+            - CPU utilization (%)
+            - Waiting tasks
+            - I/O usage (MB/s)
+            - Batch requests per second
+            - Total TempDB size (MB)
+            - RAM usage (MB)
     ]]></description>
 
     <depends>com.intellij.modules.compose</depends>
