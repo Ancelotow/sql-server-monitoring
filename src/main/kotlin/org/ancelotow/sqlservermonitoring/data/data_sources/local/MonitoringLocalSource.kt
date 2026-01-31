@@ -44,6 +44,7 @@ class MonitoringLocalSource : MonitoringSource {
                     try {
                         val conn = databaseConnectionCore.remoteConnection
                         val stmt = conn.prepareStatement(querySql)
+                        stmt.queryTimeout = 5
                         stmt.execute()
                         val resultSet = stmt.resultSet
                         if (resultSet.next()) {
@@ -52,8 +53,9 @@ class MonitoringLocalSource : MonitoringSource {
                             val other = resultSet.getInt("OtherProcessUtilization")
                             val sample = resultSet.getInt("SampleTime")
                             cont.resume(MonitorDto(proc, idle, other, sample))
+                        } else {
+                            cont.resumeWithException(Exception("No data returned from query"))
                         }
-                        cont.resume(MonitorDto(0, 0, 0, 0))
                     } catch (e: Exception) {
                         cont.resumeWithException(e)
                     }
