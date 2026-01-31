@@ -59,16 +59,14 @@ fun MonitoringTab(
             DataSourceComboBox(
                 isLoading = state.status == DefaultStateStatus.LOADING,
                 items = state.sources,
-                onItemSelected = { },
-                selected = null
+                onItemSelected = { source -> viewModel.onEvent(MonitoringTabEvent.SelectSource(source)) },
+                selected = viewModel.selectedDataSource
             )
         }
-
-
         Column {
 
             MonitoringPanelWidget(
-                refreshMs = 500,
+                refreshMs = 5000,
                 capacity = 120,
                 monitorColors = LocalColors.current.processTimeMonitor,
                 label = MyMessageBundle.message("label.processor_timer"),
