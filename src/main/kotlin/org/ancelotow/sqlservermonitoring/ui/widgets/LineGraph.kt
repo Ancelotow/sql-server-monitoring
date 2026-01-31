@@ -28,7 +28,7 @@ fun LineGraph(
 
         if (data.size < 2) return@Canvas
 
-        val maxValue = max(data.maxOrNull() ?: 1f, maxValue)
+        val maxValue = max((data.maxOrNull() ?: 1f) + 10, maxValue)
         val minValue = min(data.minOrNull() ?: 0f, maxValue - 1f)
 
         val points = data.takeLast(capacity).mapIndexed { index, value ->
