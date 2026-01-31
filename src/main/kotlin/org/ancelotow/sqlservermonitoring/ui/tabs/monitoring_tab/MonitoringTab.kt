@@ -55,45 +55,45 @@ fun MonitoringTab(
         Column {
 
             MonitoringPanelWidget(
-                refreshMs = 5000,
-                capacity = 120,
+                refreshMs = MonitoringTabViewModel.MONITORING_INTERVAL_MS,
+                capacity = MonitoringTabViewModel.CAPACITY,
                 monitorColors = LocalColors.current.processTimeMonitor,
                 label = MyMessageBundle.message("label.processor_timer"),
                 unitMetric = "%",
                 modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
             ) {
-                readFakeCpu()
+                viewModel.state.monitor.processorTime.toFloat()
             }
 
             MonitoringPanelWidget(
-                refreshMs = 500,
-                capacity = 120,
+                refreshMs = MonitoringTabViewModel.MONITORING_INTERVAL_MS,
+                capacity = MonitoringTabViewModel.CAPACITY,
                 monitorColors = LocalColors.current.waitingTasksMonitor,
                 label = MyMessageBundle.message("label.waiting_tasks"),
                 modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
             ) {
-                readFakeCpu()
+                viewModel.state.monitor.waitingTask.toFloat()
             }
 
             MonitoringPanelWidget(
-                refreshMs = 500,
-                capacity = 120,
+                refreshMs = MonitoringTabViewModel.MONITORING_INTERVAL_MS,
+                capacity = MonitoringTabViewModel.CAPACITY,
                 monitorColors = LocalColors.current.databaseIOMonitor,
                 label = MyMessageBundle.message("label.database_io"),
                 unitMetric = "MB/s",
                 modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
             ) {
-                readFakeCpu()
+                viewModel.state.monitor.databaseIO.toFloat()
             }
 
             MonitoringPanelWidget(
-                refreshMs = 500,
-                capacity = 120,
+                refreshMs = MonitoringTabViewModel.MONITORING_INTERVAL_MS,
+                capacity = MonitoringTabViewModel.CAPACITY,
                 monitorColors = LocalColors.current.batchRequestsMonitor,
                 label = MyMessageBundle.message("label.batch_requests"),
                 modifier = Modifier.weight(1f).padding(bottom = LocalDimens.current.smallPadding)
             ) {
-                readFakeCpu()
+                viewModel.state.monitor.batchRequests.toFloat()
             }
         }
 

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.openapi.project.Project
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.ancelotow.sqlservermonitoring.domain.interactors.MonitoringInteractor
 import org.ancelotow.sqlservermonitoring.domain.uses_cases.GetDataSourcesState
@@ -21,6 +22,8 @@ class MonitoringTabViewModel(
 
     override var state by mutableStateOf(MonitoringTabState().init())
         private set
+
+    private var isMonitoringActive = false
 
     var selectedDataSource by mutableStateOf<LocalDataSource?>(null)
         private set
@@ -56,6 +59,7 @@ class MonitoringTabViewModel(
     }
 
     private fun selectDataSource(dataSource: LocalDataSource){
+        startMonitoring(dataSource)
         selectedDataSource = dataSource
     }
 
@@ -80,4 +84,24 @@ class MonitoringTabViewModel(
             }
         }
     }
+
+    private fun startMonitoring(dataSource: LocalDataSource) {
+        isMonitoringActive = true
+        viewModelScope.launch {
+            while (isMonitoringActive) {
+                fetchMonitor(dataSource)
+                delay(MONITORING_INTERVAL_MS)
+            }
+        }
+    }
+
+    fun stopMonitoring() {
+        isMonitoringActive = false
+    }
+
+    companion object {
+        const val MONITORING_INTERVAL_MS = 1000L
+        const val CAPACITY = 120
+    }
+
 }
