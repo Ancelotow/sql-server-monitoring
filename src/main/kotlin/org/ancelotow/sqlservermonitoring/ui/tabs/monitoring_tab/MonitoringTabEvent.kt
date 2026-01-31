@@ -7,7 +7,6 @@ import org.ancelotow.sqlservermonitoring.ui.models.ViewModelEvent
 sealed class MonitoringTabEvent : ViewModelEvent {
 
     data class FetchSources(val project: Project) : MonitoringTabEvent()
-    data class SelectSource(val project: Project, val dataSource: LocalDataSource) : MonitoringTabEvent()
-    data class FetchMonitor(val project: Project, val dataSource: LocalDataSource) : MonitoringTabEvent()
+    data class SelectSource(val dataSource: LocalDataSource) : MonitoringTabEvent()
 
 }

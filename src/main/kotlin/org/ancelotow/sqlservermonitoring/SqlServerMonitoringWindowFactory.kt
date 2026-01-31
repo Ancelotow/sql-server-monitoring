@@ -14,6 +14,7 @@ import org.ancelotow.sqlservermonitoring.domain.uses_cases.GetDataSourcesUseCase
 import org.ancelotow.sqlservermonitoring.domain.uses_cases.GetMonitorUseCase
 import org.ancelotow.sqlservermonitoring.ui.tabs.monitoring_tab.MonitoringTab
 import org.ancelotow.sqlservermonitoring.ui.tabs.monitoring_tab.MonitoringTabViewModel
+import org.ancelotow.sqlservermonitoring.ui.tabs.monitoring_tab.monitors_view.MonitorViewModel
 import org.ancelotow.sqlservermonitoring.ui.theme.MyMessageBundle
 import org.ancelotow.sqlservermonitoring.ui.theme.SqlServerMonitoringTheme
 import org.jetbrains.jewel.bridge.addComposeTab
@@ -37,15 +38,15 @@ class SqlServerMonitoringWindowFactory : ToolWindowFactory {
             getDataSources = getDataSources,
             getMonitor = getMonitor
         )
-        val monitoringViewModel = MonitoringTabViewModel(
-            interactor = monitoringInteractor
-        )
+
+        val monitoringViewModel = MonitoringTabViewModel(monitoringInteractor)
+        val monitorViewModel = MonitorViewModel(monitoringInteractor)
 
         toolWindow.addComposeTab(MyMessageBundle.message("tab.overview"), focusOnClickInside = true) {
             SqlServerMonitoringTheme {
                 LaunchedEffect(Unit) {
                 }
-                MonitoringTab(project, monitoringViewModel)
+                MonitoringTab(project, monitoringViewModel, monitorViewModel)
             }
         }
     }

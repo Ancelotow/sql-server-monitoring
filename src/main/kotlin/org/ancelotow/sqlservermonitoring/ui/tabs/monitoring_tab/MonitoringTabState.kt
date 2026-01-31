@@ -9,7 +9,7 @@ import org.ancelotow.sqlservermonitoring.ui.models.ViewModelState
 
 class MonitoringTabState(
     val sources: List<LocalDataSource> = emptyList(),
-    val monitor: Monitor = Monitor.empty,
+    val sourceSelected: LocalDataSource? = null,
     status: DefaultStateStatus = DefaultStateStatus.INITIAL,
     errors: List<ErrorType> = emptyList()
 ) :  DefaultState<MonitoringTabState>(status, errors), ViewModelState {
@@ -22,8 +22,12 @@ class MonitoringTabState(
         return MonitoringTabState(status = DefaultStateStatus.LOADING)
     }
 
-    fun success(sources: List<LocalDataSource>, monitor: Monitor = Monitor.empty): MonitoringTabState {
-        return MonitoringTabState(status = DefaultStateStatus.SUCCESS, sources = sources, monitor = monitor)
+    fun success(sources: List<LocalDataSource>): MonitoringTabState {
+        return MonitoringTabState(status = DefaultStateStatus.SUCCESS, sources = sources)
+    }
+
+    fun successSelected(sources: List<LocalDataSource>, selected: LocalDataSource): MonitoringTabState {
+        return MonitoringTabState(status = DefaultStateStatus.SUCCESS, sources = sources, sourceSelected = selected)
     }
 
     override fun error(errors: List<ErrorType>): MonitoringTabState {

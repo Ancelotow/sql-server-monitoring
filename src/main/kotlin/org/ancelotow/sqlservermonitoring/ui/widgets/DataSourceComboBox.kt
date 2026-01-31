@@ -18,15 +18,21 @@ fun DataSourceComboBox(
     isLoading: Boolean,
     onItemSelected: (LocalDataSource) -> Unit
 ) {
+    val selectedIndex = items.indexOfFirst { it.uniqueId == selected?.uniqueId }
+    var internalSelectedIndex by remember(items, selected?.uniqueId) {
+        mutableStateOf(selectedIndex)
+    }
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
+
         ListComboBox(
             modifier = Modifier.weight(1f),
             enabled = !isLoading && items.isNotEmpty(),
             items = items.map { it.name },
-            selectedIndex = items.indexOf(selected),
+            selectedIndex = internalSelectedIndex,
             onSelectedItemChange = { onItemSelected(items[it]) }
         )
 
