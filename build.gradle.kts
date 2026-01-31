@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "org.ancelotow"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -20,6 +20,7 @@ dependencies {
     intellijPlatform {
         intellijIdea("2025.2.4")
         testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
+        implementation("com.microsoft.sqlserver:mssql-jdbc:11.2.2.jre17")
 
         // Add plugin dependencies for compilation here:
 

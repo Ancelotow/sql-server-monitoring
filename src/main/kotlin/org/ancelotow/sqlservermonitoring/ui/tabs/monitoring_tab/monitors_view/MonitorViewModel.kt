@@ -1,0 +1,69 @@
+package org.ancelotow.sqlservermonitoring.ui.tabs.monitoring_tab.monitors_view
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.intellij.database.dataSource.LocalDataSource
+import com.intellij.openapi.project.Project
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import org.ancelotow.sqlservermonitoring.domain.interactors.MonitoringInteractor
+import org.ancelotow.sqlservermonitoring.domain.uses_cases.GetMonitorState
+import org.ancelotow.sqlservermonitoring.ui.models.DefaultViewModel
+import org.ancelotow.sqlservermonitoring.ui.models.ErrorType
+
+class MonitorViewModel(
+    private val interactor: MonitoringInteractor
+) :  ViewModel(), DefaultViewModel<MonitorViewState, MonitorViewEvent> {
+    override var state by mutableStateOf(MonitorViewState().init())
+        private set
+
+    private var monitoringJob: Job? = null
+    override fun onEvent(event: MonitorViewEvent) {
+        when(event){
+            is MonitorViewEvent.StartFetching -> startMonitoring(event.project, event.dataSource)
+            is MonitorViewEvent.StopFetching -> stopMonitoring()
+            is MonitorViewEvent.ResumeFetching -> startMonitoring(event.project, event.dataSource)
+        }
+    }
+
+    private fun startMonitoring(project: Project, dataSource: LocalDataSource) {
+        monitoringJob?.cancel()
+        monitoringJob = viewModelScope.launch {
+            while (isActive) {
+                interactor.getMonitor(project, dataSource).collect {
+                    state = when (it) {
+                        is GetMonitorState.Loading -> {
+                            state.success(state.monitor)
+                        }
+
+                        is GetMonitorState.Success -> {
+                            state.success(it.monitor)
+                        }
+
+                        is GetMonitorState.Error -> {
+                            state.error(errors = listOf(ErrorType.UNKNOWN_ERROR))
+                        }
+                    }
+
+                }
+                delay(MONITORING_INTERVAL_MS)
+            }
+        }
+    }
+
+    private fun stopMonitoring() {
+        monitoringJob?.cancel()
+        monitoringJob = null
+        state = state.successStop()
+    }
+
+    companion object {
+        const val MONITORING_INTERVAL_MS = 1000L
+        const val CAPACITY = 120
+    }
+}
