@@ -3,6 +3,12 @@
   SQL Server Monitoring
 </h1>
 
+
+![JetBrains Plugin Version](https://img.shields.io/jetbrains/plugin/v/30007)
+
+![JetBrains Plugin Downloads](https://img.shields.io/jetbrains/plugin/d/30007)
+![JetBrains Plugin Rating](https://img.shields.io/jetbrains/plugin/r/rating/30007)
+
 JetBrains plugin to monitor SQL Server databases.
 
 ## 🚀 Features
@@ -20,7 +26,9 @@ JetBrains plugin to monitor SQL Server databases.
 
   <img src="assets/screenshots.png" alt="screenshot" height="500" style="vertical-align: middle; margin-right: 10px;">
 
+## ⚙️ Installation
 
+<iframe width="384px" height="319px" src="https://plugins.jetbrains.com/embeddable/card/30007"></iframe>
 
 ## 🎨 Crédit Graphique
 Les logos ont été créés par [Irene CERRO](https://github.com/pandairene7).
