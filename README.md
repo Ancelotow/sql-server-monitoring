@@ -11,7 +11,7 @@
 ![GitHub License](https://img.shields.io/github/license/Ancelotow/sql-server-monitoring)
 
 
-JetBrains plugin to monitor SQL Server databases.
+A JetBrains plugin designed to monitor SQL Server databases directly from your favorite JetBrains IDEs, such as DataGrip or IntelliJ IDEA Ultimate.
 
 [Link to demo video](https://youtu.be/OEbcTEhJUsg?si=2Di-QUwZzPaxyOCu)
 
