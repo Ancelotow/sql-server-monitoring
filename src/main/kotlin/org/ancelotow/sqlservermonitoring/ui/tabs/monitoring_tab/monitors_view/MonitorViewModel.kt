@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.openapi.project.Project
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.ancelotow.sqlservermonitoring.domain.interactors.MonitoringInteractor
 import org.ancelotow.sqlservermonitoring.domain.uses_cases.GetMonitorState
@@ -20,42 +22,33 @@ class MonitorViewModel(
     override var state by mutableStateOf(MonitorViewState().init())
         private set
 
-    private var isMonitoringActive = false
-
+    private var monitoringJob: Job? = null
     override fun onEvent(event: MonitorViewEvent) {
         when(event){
-            is MonitorViewEvent.FetchMonitor -> fetchMonitor(event.project, event.dataSource)
             is MonitorViewEvent.StartFetching -> startMonitoring(event.project, event.dataSource)
         }
     }
 
-    private fun fetchMonitor(project: Project, dataSource: LocalDataSource){
-        viewModelScope.launch {
-            state = state.init()
-            interactor.getMonitor(project, dataSource).collect {
-                state = when(it){
-                    is GetMonitorState.Loading -> {
-                        state.loading()
-                    }
-
-                    is GetMonitorState.Success -> {
-                        state.success(it.monitor)
-                    }
-
-                    is GetMonitorState.Error -> {
-                        state.error(errors = listOf(ErrorType.UNKNOWN_ERROR))
-                    }
-                }
-
-            }
-        }
-    }
-
     private fun startMonitoring(project: Project, dataSource: LocalDataSource) {
-        isMonitoringActive = true
-        viewModelScope.launch {
-            while (isMonitoringActive) {
-                fetchMonitor(project, dataSource)
+        monitoringJob?.cancel()
+        monitoringJob = viewModelScope.launch {
+            while (isActive) {
+                interactor.getMonitor(project, dataSource).collect {
+                    state = when (it) {
+                        is GetMonitorState.Loading -> {
+                            state.success(state.monitor)
+                        }
+
+                        is GetMonitorState.Success -> {
+                            state.success(it.monitor)
+                        }
+
+                        is GetMonitorState.Error -> {
+                            state.error(errors = listOf(ErrorType.UNKNOWN_ERROR))
+                        }
+                    }
+
+                }
                 delay(MONITORING_INTERVAL_MS)
             }
         }
